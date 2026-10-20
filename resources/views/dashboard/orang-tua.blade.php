@@ -32,8 +32,29 @@
                                 </div>
                                 @include('pendaftaran.partials.status-badge', ['status' => $siswa->status_pendaftaran])
                             </div>
-                            <div class="mt-4 flex flex-wrap gap-2">
+
+                            @if (in_array($siswa->status_pendaftaran, ['diterima', 'daftar_ulang']))
+                                <div class="mt-3 rounded-lg border border-emerald-300 bg-emerald-100/80 p-3 text-emerald-950">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-5 w-5 text-emerald-700 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                        <span class="text-sm font-bold">Alhamdulillah! Ananda dinyatakan DITERIMA di SDIT Binaul Ummah.</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-emerald-800">Surat pemberitahuan penerimaan resmi telah diterbitkan dan dapat Anda cetak sebagai dokumen kelulusan seleksi PPDB.</p>
+                                </div>
+                            @endif
+
+                            <div class="mt-4 flex flex-wrap items-center gap-2">
                                 <a href="{{ route('pendaftaran.detail', $siswa) }}" class="btn-light !py-2">Detail & Berkas</a>
+                                <a href="{{ route('pendaftaran.cetak-formulir', $siswa) }}" target="_blank" class="btn-secondary !py-2 inline-flex items-center gap-1.5 text-xs font-semibold">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                    Cetak Formulir (PDF)
+                                </a>
+                                @if (in_array($siswa->status_pendaftaran, ['diterima', 'daftar_ulang']))
+                                    <a href="{{ route('pendaftaran.cetak-pemberitahuan', $siswa) }}" target="_blank" class="btn-primary !py-2 inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        Cetak Surat Diterima (PDF)
+                                    </a>
+                                @endif
                                 @if ($siswa->jadwal_observasi)
                                     <span class="badge-primary">Observasi: {{ $siswa->jadwal_observasi->format('d/m/Y H:i') }}</span>
                                 @endif

@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\BerkasPendaftaran;
 use App\Models\CalonSiswa;
+use App\Models\ProfilSekolah;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\View\View;
 
@@ -36,9 +40,11 @@ class PendaftaranController extends Controller
             'alasan_memilih' => ['nullable', 'string'],
         ]);
 
-        $request->user()->calonSiswas()->create($data);
+        $calonSiswa = $request->user()->calonSiswas()->create($data);
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran berhasil dikirim.');
+        return redirect()->route('pendaftaran.detail', $calonSiswa)
+            ->with('success', 'Pendaftaran berhasil dikirim. Formulir pendaftaran ananda sudah siap dicetak.')
+            ->with('just_registered', true);
     }
 
     public function updateStatus(Request $request, CalonSiswa $calonSiswa): RedirectResponse
@@ -51,7 +57,12 @@ class PendaftaranController extends Controller
 
         $calonSiswa->update($data);
 
-        return back()->with('success', 'Status pendaftaran berhasil diperbarui.');
+        $message = 'Status pendaftaran berhasil diperbarui.';
+        if (in_array($data['status_pendaftaran'], ['diterima', 'daftar_ulang'])) {
+            $message = 'Status calon siswa berhasil diperbarui menjadi Diterima. Surat pemberitahuan penerimaan kini siap dicetak.';
+        }
+
+        return back()->with('success', $message);
     }
 
     public function show(CalonSiswa $calonSiswa): View
@@ -134,6 +145,44 @@ class PendaftaranController extends Controller
 
             fclose($handle);
         }, $fileName, ['Content-Type' => 'text/csv']);
+    }
+
+    public function cetakFormulir(Request $request, CalonSiswa $calonSiswa): Response
+    {
+        $this->authorizeAccess($calonSiswa);
+
+        $calonSiswa->load(['orangTua', 'berkas']);
+        $profil = ProfilSekolah::values();
+
+        $pdf = Pdf::loadView('pendaftaran.pdf.formulir', compact('calonSiswa', 'profil'))
+            ->setPaper('a4', 'portrait');
+
+        $fileName = 'formulir-pendaftaran-'.Str::slug($calonSiswa->nama_lengkap).'.pdf';
+
+        return $request->boolean('download')
+            ? $pdf->download($fileName)
+            : $pdf->stream($fileName);
+    }
+
+    public function cetakPemberitahuan(Request $request, CalonSiswa $calonSiswa): Response|RedirectResponse
+    {
+        $this->authorizeAccess($calonSiswa);
+
+        if (!in_array($calonSiswa->status_pendaftaran, ['diterima', 'daftar_ulang'])) {
+            return back()->with('error', 'Surat pemberitahuan hanya dapat dicetak setelah calon siswa dinyatakan diterima.');
+        }
+
+        $calonSiswa->load(['orangTua', 'berkas']);
+        $profil = ProfilSekolah::values();
+
+        $pdf = Pdf::loadView('pendaftaran.pdf.surat-penerimaan', compact('calonSiswa', 'profil'))
+            ->setPaper('a4', 'portrait');
+
+        $fileName = 'surat-pemberitahuan-diterima-'.Str::slug($calonSiswa->nama_lengkap).'.pdf';
+
+        return $request->boolean('download')
+            ? $pdf->download($fileName)
+            : $pdf->stream($fileName);
     }
 
     private function authorizeAccess(CalonSiswa $calonSiswa): void

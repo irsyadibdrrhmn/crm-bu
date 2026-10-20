@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:orang_tua,admin')->group(function () {
         Route::get('/pendaftaran/{calonSiswa}/detail', [PendaftaranController::class, 'show'])->name('pendaftaran.detail');
+        Route::get('/pendaftaran/{calonSiswa}/cetak-formulir', [PendaftaranController::class, 'cetakFormulir'])->name('pendaftaran.cetak-formulir');
+        Route::get('/pendaftaran/{calonSiswa}/cetak-pemberitahuan', [PendaftaranController::class, 'cetakPemberitahuan'])->name('pendaftaran.cetak-pemberitahuan');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

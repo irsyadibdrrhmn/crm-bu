@@ -82,7 +82,17 @@
                                         </select>
                                         <button class="btn-primary !py-2">Simpan</button>
                                     </form>
-                                    <a href="{{ route('pendaftaran.show', $siswa) }}" class="mt-2 inline-flex text-sm font-semibold text-emerald-700">Detail</a>
+                                    <div class="mt-2 flex flex-wrap items-center gap-2">
+                                        <a href="{{ route('pendaftaran.show', $siswa) }}" class="inline-flex text-xs font-semibold text-emerald-700 hover:underline">Detail</a>
+                                        <span class="text-slate-300">&bull;</span>
+                                        <a href="{{ route('pendaftaran.cetak-formulir', $siswa) }}" target="_blank" class="inline-flex text-xs font-semibold text-slate-600 hover:text-emerald-700 hover:underline">Formulir PDF</a>
+                                        @if (in_array($siswa->status_pendaftaran, ['diterima', 'daftar_ulang']))
+                                            <span class="text-slate-300">&bull;</span>
+                                            <a href="{{ route('pendaftaran.cetak-pemberitahuan', $siswa) }}" target="_blank" class="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800 hover:bg-emerald-200">
+                                                Surat Diterima PDF
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

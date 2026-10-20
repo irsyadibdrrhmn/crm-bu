@@ -23,7 +23,7 @@
                         <th>Berkas</th>
                         <th>Status</th>
                         <th>Validasi</th>
-                        <th>Detail</th>
+                        <th>Aksi / Dokumen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,7 +47,21 @@
                                     <button class="btn-primary !py-2">Simpan</button>
                                 </form>
                             </td>
-                            <td><a href="{{ route('pendaftaran.show', $siswa) }}" class="btn-light">Buka</a></td>
+                            <td>
+                                <div class="flex flex-col gap-1.5 min-w-[130px]">
+                                    <a href="{{ route('pendaftaran.show', $siswa) }}" class="btn-light !py-1.5 text-center text-xs">Detail</a>
+                                    <a href="{{ route('pendaftaran.cetak-formulir', $siswa) }}" target="_blank" class="inline-flex items-center justify-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                        Formulir PDF
+                                    </a>
+                                    @if (in_array($siswa->status_pendaftaran, ['diterima', 'daftar_ulang']))
+                                        <a href="{{ route('pendaftaran.cetak-pemberitahuan', $siswa) }}" target="_blank" class="inline-flex items-center justify-center gap-1 rounded bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-200">
+                                            <svg class="h-3.5 w-3.5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            Surat Diterima PDF
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
