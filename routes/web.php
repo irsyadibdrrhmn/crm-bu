@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalitikController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JadwalPpdbController;
 use App\Http\Controllers\LandingController;
@@ -16,7 +17,7 @@ Route::post('/minat', [LeadController::class, 'store'])->name('leads.store');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::middleware('role:orang_tua')->group(function () {
+    Route::middleware('role:orang_tua,guru_tk')->group(function () {
         Route::get('/pendaftaran/create', [PendaftaranController::class, 'create'])->name('pendaftaran.create');
         Route::post('/pendaftaran', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
         Route::post('/pendaftaran/{calonSiswa}/berkas', [PendaftaranController::class, 'uploadBerkas'])->name('pendaftaran.berkas.store');
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:admin')->group(function () {
+        Route::get('/analitik', [AnalitikController::class, 'index'])->name('analitik.index');
         Route::get('/pendaftaran', [PendaftaranController::class, 'index'])->name('pendaftaran.index');
         Route::get('/pendaftaran/export/csv', [PendaftaranController::class, 'export'])->name('pendaftaran.export');
         Route::get('/pendaftaran/{calonSiswa}', [PendaftaranController::class, 'show'])->name('pendaftaran.show');
@@ -41,7 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('pengumuman', PengumumanController::class)->except('show');
     });
 
-    Route::middleware('role:orang_tua,admin')->group(function () {
+    Route::middleware('role:orang_tua,guru_tk,admin')->group(function () {
         Route::get('/pendaftaran/{calonSiswa}/detail', [PendaftaranController::class, 'show'])->name('pendaftaran.detail');
         Route::get('/pendaftaran/{calonSiswa}/cetak-formulir', [PendaftaranController::class, 'cetakFormulir'])->name('pendaftaran.cetak-formulir');
         Route::get('/pendaftaran/{calonSiswa}/cetak-pemberitahuan', [PendaftaranController::class, 'cetakPemberitahuan'])->name('pendaftaran.cetak-pemberitahuan');

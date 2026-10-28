@@ -14,6 +14,8 @@ class User extends Authenticatable
         'name',
         'email',
         'role',
+        'asal_sekolah',
+        'no_hp',
         'password',
     ];
 
@@ -43,5 +45,15 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isGuruTk(): bool
+    {
+        return $this->role === 'guru_tk';
+    }
+
+    public function isOrangTua(): bool
+    {
+        return $this->role === 'orang_tua';
     }
 }

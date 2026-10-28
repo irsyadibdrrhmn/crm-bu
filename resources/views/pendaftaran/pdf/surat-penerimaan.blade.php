@@ -235,6 +235,11 @@
             <td class="value">{{ $calonSiswa->nama_lengkap }}</td>
         </tr>
         <tr>
+            <td class="label">NIK Calon Siswa</td>
+            <td class="separator">:</td>
+            <td class="value">{{ $calonSiswa->nik ?: '-' }}</td>
+        </tr>
+        <tr>
             <td class="label">Tempat, Tanggal Lahir</td>
             <td class="separator">:</td>
             <td class="value">{{ $calonSiswa->tempat_lahir }}, {{ $calonSiswa->tanggal_lahir->locale('id')->translatedFormat('d F Y') }}</td>

@@ -32,13 +32,44 @@ class PendaftaranController extends Controller
     {
         $data = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nik' => ['nullable', 'string', 'size:16'],
+            'no_kk' => ['nullable', 'string', 'size:16'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date'],
+            'jenis_kelamin' => ['nullable', 'in:L,P'],
+            'anak_ke' => ['nullable', 'integer', 'min:1'],
+            'jumlah_saudara' => ['nullable', 'integer', 'min:0'],
             'asal_tk' => ['nullable', 'string', 'max:255'],
+            'alamat_lengkap' => ['nullable', 'string'],
+            'rt_rw' => ['nullable', 'string', 'max:20'],
+            'kelurahan_desa' => ['nullable', 'string', 'max:100'],
+            'kecamatan' => ['nullable', 'string', 'max:100'],
+            'kota_kabupaten' => ['nullable', 'string', 'max:100'],
+            'nama_ayah' => ['nullable', 'string', 'max:255'],
+            'nik_ayah' => ['nullable', 'string', 'size:16'],
+            'pekerjaan_ayah' => ['nullable', 'string', 'max:255'],
+            'pendidikan_ayah' => ['nullable', 'string', 'max:100'],
+            'no_hp_ayah' => ['nullable', 'string', 'max:30'],
+            'nama_ibu' => ['nullable', 'string', 'max:255'],
+            'nik_ibu' => ['nullable', 'string', 'size:16'],
+            'pekerjaan_ibu' => ['nullable', 'string', 'max:255'],
+            'pendidikan_ibu' => ['nullable', 'string', 'max:100'],
+            'no_hp_ibu' => ['nullable', 'string', 'max:30'],
+            'nama_wali' => ['nullable', 'string', 'max:255'],
+            'pekerjaan_wali' => ['nullable', 'string', 'max:255'],
+            'no_hp_wali' => ['nullable', 'string', 'max:30'],
             'sumber_informasi' => ['nullable', 'string', 'max:255'],
             'program_diminati' => ['nullable', 'string', 'max:255'],
             'alasan_memilih' => ['nullable', 'string'],
         ]);
+
+        $data['pendaftar_peran'] = $request->user()->role === 'guru_tk' ? 'guru_tk' : 'orang_tua';
+        if ($request->user()->role === 'guru_tk' && empty($data['sumber_informasi'])) {
+            $data['sumber_informasi'] = 'Rekomendasi Guru TK';
+        }
+        if ($request->user()->role === 'guru_tk' && empty($data['asal_tk']) && $request->user()->asal_sekolah) {
+            $data['asal_tk'] = $request->user()->asal_sekolah;
+        }
 
         $calonSiswa = $request->user()->calonSiswas()->create($data);
 

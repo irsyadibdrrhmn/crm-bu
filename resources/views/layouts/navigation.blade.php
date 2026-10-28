@@ -1,18 +1,26 @@
 @php
     $user = auth()->user();
-    $navItems = $user?->role === 'admin'
-        ? [
-            ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard', 'icon' => 'chart'],
+    if ($user?->role === 'admin') {
+        $navItems = [
+            ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard', 'icon' => 'home'],
+            ['label' => 'Analitik PPDB', 'route' => 'analitik.index', 'active' => 'analitik.*', 'icon' => 'chart'],
             ['label' => 'Leads Orang Tua', 'route' => 'leads.index', 'active' => 'leads.*', 'icon' => 'users'],
             ['label' => 'Data Pendaftar', 'route' => 'pendaftaran.index', 'active' => 'pendaftaran.*', 'icon' => 'students'],
             ['label' => 'Profil Sekolah', 'route' => 'profil-sekolah.edit', 'active' => 'profil-sekolah.*', 'icon' => 'school'],
             ['label' => 'Jadwal PPDB', 'route' => 'jadwal-ppdb.index', 'active' => 'jadwal-ppdb.*', 'icon' => 'calendar'],
             ['label' => 'Pengumuman', 'route' => 'pengumuman.index', 'active' => 'pengumuman.*', 'icon' => 'megaphone'],
-        ]
-        : [
+        ];
+    } elseif ($user?->role === 'guru_tk') {
+        $navItems = [
+            ['label' => 'Dashboard Guru TK', 'route' => 'dashboard', 'active' => 'dashboard', 'icon' => 'home'],
+            ['label' => 'Daftar Siswa Baru', 'route' => 'pendaftaran.create', 'active' => 'pendaftaran.*', 'icon' => 'book'],
+        ];
+    } else {
+        $navItems = [
             ['label' => 'Dashboard', 'route' => 'dashboard', 'active' => 'dashboard', 'icon' => 'home'],
             ['label' => 'Daftar Anak', 'route' => 'pendaftaran.create', 'active' => 'pendaftaran.*', 'icon' => 'book'],
         ];
+    }
 @endphp
 
 @php

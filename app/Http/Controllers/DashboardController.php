@@ -30,6 +30,14 @@ class DashboardController extends Controller
             ]);
         }
 
+        if (auth()->user()->isGuruTk()) {
+            return view('dashboard.guru-tk', [
+                'calonSiswas' => auth()->user()->calonSiswas()->with(['berkas', 'pesan.user'])->latest()->get(),
+                'pengumumans' => Pengumuman::latest('tanggal_publish')->limit(5)->get(),
+                'jadwals' => JadwalPpdb::orderBy('urutan')->orderBy('tanggal_mulai')->limit(5)->get(),
+            ]);
+        }
+
         return view('dashboard.orang-tua', [
             'calonSiswas' => auth()->user()->calonSiswas()->with(['berkas', 'pesan.user'])->latest()->get(),
             'pengumumans' => Pengumuman::latest('tanggal_publish')->limit(5)->get(),

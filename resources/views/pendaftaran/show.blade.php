@@ -74,23 +74,83 @@
             @endif
 
             <div class="panel p-6">
-                <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start justify-between gap-4 border-b border-emerald-100 pb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-900">Biodata Calon Siswa</h2>
-                        <p class="mt-1 text-sm text-slate-500">{{ $calonSiswa->orangTua->name }} - {{ $calonSiswa->orangTua->email }}</p>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-lg font-bold text-slate-900">Biodata Calon Siswa</h2>
+                            @if ($calonSiswa->pendaftar_peran === 'guru_tk')
+                                <span class="rounded bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-800">Didaftarkan oleh Guru TK</span>
+                            @endif
+                        </div>
+                        <p class="mt-1 text-xs text-slate-500">
+                            Akun Pendaftar: <strong>{{ $calonSiswa->orangTua->name }}</strong> ({{ $calonSiswa->orangTua->email }})
+                            @if ($calonSiswa->orangTua->asal_sekolah)
+                                &bull; Mitra: {{ $calonSiswa->orangTua->asal_sekolah }}
+                            @endif
+                        </p>
                     </div>
                     @include('pendaftaran.partials.status-badge', ['status' => $calonSiswa->status_pendaftaran])
                 </div>
 
-                <dl class="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div><dt class="text-xs font-bold uppercase text-slate-500">Tempat/Tanggal Lahir</dt><dd class="mt-1 text-sm text-slate-800">{{ $calonSiswa->tempat_lahir }}, {{ $calonSiswa->tanggal_lahir->format('d/m/Y') }}</dd></div>
-                    <div><dt class="text-xs font-bold uppercase text-slate-500">Asal TK</dt><dd class="mt-1 text-sm text-slate-800">{{ $calonSiswa->asal_tk ?? '-' }}</dd></div>
-                    <div><dt class="text-xs font-bold uppercase text-slate-500">Sumber Informasi</dt><dd class="mt-1 text-sm text-slate-800">{{ $calonSiswa->sumber_informasi ?? '-' }}</dd></div>
-                    <div><dt class="text-xs font-bold uppercase text-slate-500">Program Diminati</dt><dd class="mt-1 text-sm text-slate-800">{{ $calonSiswa->program_diminati ?? '-' }}</dd></div>
-                    <div class="sm:col-span-2"><dt class="text-xs font-bold uppercase text-slate-500">Alasan Memilih</dt><dd class="mt-1 text-sm leading-6 text-slate-800">{{ $calonSiswa->alasan_memilih ?? '-' }}</dd></div>
-                    <div class="sm:col-span-2"><dt class="text-xs font-bold uppercase text-slate-500">Catatan Admin</dt><dd class="mt-1 text-sm leading-6 text-slate-800">{{ $calonSiswa->catatan_admin ?? '-' }}</dd></div>
-                    <div><dt class="text-xs font-bold uppercase text-slate-500">Jadwal Observasi</dt><dd class="mt-1 text-sm text-slate-800">{{ $calonSiswa->jadwal_observasi?->format('d/m/Y H:i') ?? '-' }}</dd></div>
-                </dl>
+                <!-- Bagian Identitas Siswa -->
+                <div class="mt-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded">1. Identitas Siswa</h3>
+                    <dl class="mt-3 grid gap-3 sm:grid-cols-2 text-sm">
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">NIK Calon Siswa</dt><dd class="font-semibold text-slate-900">{{ $calonSiswa->nik ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Nomor KK</dt><dd class="font-semibold text-slate-900">{{ $calonSiswa->no_kk ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Tempat / Tanggal Lahir</dt><dd class="text-slate-800">{{ $calonSiswa->tempat_lahir }}, {{ $calonSiswa->tanggal_lahir->format('d/m/Y') }} ({{ \Carbon\Carbon::parse($calonSiswa->tanggal_lahir)->age }} tahun)</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Jenis Kelamin</dt><dd class="text-slate-800">{{ $calonSiswa->jenis_kelamin === 'L' ? 'Laki-laki' : ($calonSiswa->jenis_kelamin === 'P' ? 'Perempuan' : '-') }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Asal TK / Sekolah</dt><dd class="text-slate-800">{{ $calonSiswa->asal_tk ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Status Anak</dt><dd class="text-slate-800">Anak ke-{{ $calonSiswa->anak_ke ?: '-' }} dari {{ $calonSiswa->jumlah_saudara ?: '-' }} bersaudara</dd></div>
+                    </dl>
+                </div>
+
+                <!-- Bagian Alamat -->
+                <div class="mt-5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded">2. Tempat Tinggal</h3>
+                    <dl class="mt-3 grid gap-3 sm:grid-cols-2 text-sm">
+                        <div class="sm:col-span-2"><dt class="text-xs font-bold text-slate-500 uppercase">Alamat Lengkap</dt><dd class="text-slate-800">{{ $calonSiswa->alamat_lengkap ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">RT / RW</dt><dd class="text-slate-800">{{ $calonSiswa->rt_rw ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Kelurahan / Desa</dt><dd class="text-slate-800">{{ $calonSiswa->kelurahan_desa ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Kecamatan</dt><dd class="text-slate-800">{{ $calonSiswa->kecamatan ?: '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Kota / Kabupaten</dt><dd class="text-slate-800">{{ $calonSiswa->kota_kabupaten ?: '-' }}</dd></div>
+                    </dl>
+                </div>
+
+                <!-- Bagian Orang Tua / Wali -->
+                <div class="mt-5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded">3. Data Orang Tua / Wali</h3>
+                    <div class="mt-3 grid gap-4 sm:grid-cols-2 text-sm">
+                        <!-- Ayah -->
+                        <div class="rounded border border-slate-100 bg-slate-50 p-3">
+                            <p class="font-bold text-xs uppercase text-slate-600 mb-1.5">Ayah Kandung</p>
+                            <p class="font-semibold text-slate-900">{{ $calonSiswa->nama_ayah ?: '-' }}</p>
+                            <p class="text-xs text-slate-600">NIK: {{ $calonSiswa->nik_ayah ?: '-' }}</p>
+                            <p class="text-xs text-slate-600">Pekerjaan: {{ $calonSiswa->pekerjaan_ayah ?: '-' }} ({{ $calonSiswa->pendidikan_ayah ?: '-' }})</p>
+                            <p class="text-xs text-slate-600">No. HP: {{ $calonSiswa->no_hp_ayah ?: '-' }}</p>
+                        </div>
+                        <!-- Ibu -->
+                        <div class="rounded border border-slate-100 bg-slate-50 p-3">
+                            <p class="font-bold text-xs uppercase text-slate-600 mb-1.5">Ibu Kandung</p>
+                            <p class="font-semibold text-slate-900">{{ $calonSiswa->nama_ibu ?: '-' }}</p>
+                            <p class="text-xs text-slate-600">NIK: {{ $calonSiswa->nik_ibu ?: '-' }}</p>
+                            <p class="text-xs text-slate-600">Pekerjaan: {{ $calonSiswa->pekerjaan_ibu ?: '-' }} ({{ $calonSiswa->pendidikan_ibu ?: '-' }})</p>
+                            <p class="text-xs text-slate-600">No. HP: {{ $calonSiswa->no_hp_ibu ?: '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian Program & Observasi -->
+                <div class="mt-5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded">4. Peminatan & Keterangan Seleksi</h3>
+                    <dl class="mt-3 grid gap-3 sm:grid-cols-2 text-sm">
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Program Diminati</dt><dd class="font-semibold text-emerald-800">{{ $calonSiswa->program_diminati ?? '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Sumber Informasi</dt><dd class="text-slate-800">{{ $calonSiswa->sumber_informasi ?? '-' }}</dd></div>
+                        <div class="sm:col-span-2"><dt class="text-xs font-bold text-slate-500 uppercase">Alasan Memilih</dt><dd class="text-slate-800">{{ $calonSiswa->alasan_memilih ?? '-' }}</dd></div>
+                        <div class="sm:col-span-2"><dt class="text-xs font-bold text-slate-500 uppercase">Catatan Admin</dt><dd class="text-slate-800">{{ $calonSiswa->catatan_admin ?? '-' }}</dd></div>
+                        <div><dt class="text-xs font-bold text-slate-500 uppercase">Jadwal Observasi</dt><dd class="font-semibold text-slate-800">{{ $calonSiswa->jadwal_observasi?->format('d/m/Y H:i') ?? '-' }}</dd></div>
+                    </dl>
+                </div>
             </div>
 
             @if (auth()->user()->isAdmin())

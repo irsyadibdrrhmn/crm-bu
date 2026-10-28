@@ -29,8 +29,16 @@
                 <tbody>
                     @forelse ($pendaftar as $siswa)
                         <tr>
-                            <td class="font-semibold text-slate-900">{{ $siswa->nama_lengkap }}</td>
-                            <td>{{ $siswa->orangTua->name }}</td>
+                            <td>
+                                <div class="font-semibold text-slate-900">{{ $siswa->nama_lengkap }}</div>
+                                <div class="text-[11px] text-slate-500">NIK: {{ $siswa->nik ?: '-' }} ({{ $siswa->jenis_kelamin === 'L' ? 'L' : ($siswa->jenis_kelamin === 'P' ? 'P' : '-') }})</div>
+                            </td>
+                            <td>
+                                <div class="text-slate-900">{{ $siswa->orangTua->name }}</div>
+                                @if ($siswa->pendaftar_peran === 'guru_tk' || $siswa->orangTua->role === 'guru_tk')
+                                    <span class="inline-block mt-0.5 rounded bg-sky-100 px-1.5 py-0.5 text-[10px] font-bold text-sky-800">Guru TK Mitra</span>
+                                @endif
+                            </td>
                             <td>{{ $siswa->tanggal_lahir->format('d/m/Y') }}</td>
                             <td>{{ $siswa->asal_tk ?? '-' }}</td>
                             <td>{{ $siswa->berkas->where('status', 'lengkap')->count() }}/{{ $siswa->berkas->count() }} lengkap</td>
